@@ -9,10 +9,7 @@ class MealLogRepository {
 
   MealLogRepository(this._prefs);
 
-  Future<void> saveMealLog(MealLogModel log) async {
-    final logs = await getMealLogs();
-    logs.add(log);
-
+  Future<void> saveMealLogs(List<MealLogModel> logs) async {
     final jsonLogs = logs.map((log) => log.toJson()).toList();
     await _prefs.setString(_kMealLogsKey, jsonEncode(jsonLogs));
   }

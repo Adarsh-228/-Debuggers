@@ -64,20 +64,33 @@ class MealLogCubit extends Cubit<MealLogState> {
     final log = MealLogModel(
       id: DateTime.now().toIso8601String(),
       timestamp: DateTime.now(),
-      type: MealType.breakfast, // Default type
-      items: [
-        ...state.breakfast,
-        ...state.lunch,
-        ...state.snacks,
-        ...state.dinner,
-      ],
+      breakfast: state.breakfast,
+      lunch: state.lunch,
+      snacks: state.snacks,
+      dinner: state.dinner,
     );
-    await _repository.saveMealLog(log);
+
+    final existingLogs = await _repository.getMealLogs();
+    final today = DateTime.now();
+    final existingIndex = existingLogs.indexWhere(
+      (log) =>
+          log.timestamp.year == today.year &&
+          log.timestamp.month == today.month &&
+          log.timestamp.day == today.day,
+    );
+
+    if (existingIndex != -1) {
+      existingLogs[existingIndex] = log;
+    } else {
+      existingLogs.add(log);
+    }
+
+    await _repository.saveMealLogs(existingLogs);
   }
 
-  Future<void> loadLogs() async {
+  Future<List<MealLogModel>> loadLogs() async {
     final logs = await _repository.getMealLogs();
-    print('logs: $logs');
-    // Implementation depends on how you want to handle historical data
+    emit(state.copyWith(history: logs));
+    return logs;
   }
 }

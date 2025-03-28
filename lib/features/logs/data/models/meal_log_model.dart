@@ -3,34 +3,48 @@ import 'package:equatable/equatable.dart';
 class MealLogModel extends Equatable {
   final String id;
   final DateTime timestamp;
-  final MealType type;
-  final List<FoodItem> items;
+  final List<FoodItem> breakfast;
+  final List<FoodItem> lunch;
+  final List<FoodItem> snacks;
+  final List<FoodItem> dinner;
 
   const MealLogModel({
     required this.id,
     required this.timestamp,
-    required this.type,
-    required this.items,
+    required this.breakfast,
+    required this.lunch,
+    required this.snacks,
+    required this.dinner,
   });
 
   Map<String, dynamic> toJson() => {
         'id': id,
         'timestamp': timestamp.toIso8601String(),
-        'type': type.name,
-        'items': items.map((item) => item.toJson()).toList(),
+        'breakfast': breakfast.map((item) => item.toJson()).toList(),
+        'lunch': lunch.map((item) => item.toJson()).toList(),
+        'snacks': snacks.map((item) => item.toJson()).toList(),
+        'dinner': dinner.map((item) => item.toJson()).toList(),
       };
 
   factory MealLogModel.fromJson(Map<String, dynamic> json) => MealLogModel(
         id: json['id'],
         timestamp: DateTime.parse(json['timestamp']),
-        type: MealType.values.byName(json['type']),
-        items: (json['items'] as List)
+        breakfast: (json['breakfast'] as List)
+            .map((item) => FoodItem.fromJson(item))
+            .toList(),
+        lunch: (json['lunch'] as List)
+            .map((item) => FoodItem.fromJson(item))
+            .toList(),
+        snacks: (json['snacks'] as List)
+            .map((item) => FoodItem.fromJson(item))
+            .toList(),
+        dinner: (json['dinner'] as List)
             .map((item) => FoodItem.fromJson(item))
             .toList(),
       );
 
   @override
-  List<Object?> get props => [id, timestamp, type, items];
+  List<Object?> get props => [id, timestamp, breakfast, lunch, snacks, dinner];
 }
 
 enum MealType { breakfast, lunch, snacks, dinner }

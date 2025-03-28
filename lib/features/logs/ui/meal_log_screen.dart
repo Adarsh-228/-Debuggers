@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:healthcompanion/core/constants.dart';
 import 'package:healthcompanion/features/logs/cubit/meal_log_cubit.dart';
@@ -23,6 +24,14 @@ class MealLogScreen extends StatelessWidget {
               'Meal Log',
               style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
             ),
+          ),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () => context.push('/history'),
+            tooltip: 'History',
+            backgroundColor: Colors.purple,
+            foregroundColor: Colors.white,
+            elevation: 1,
+            child: const Icon(Icons.history),
           ),
           body: Column(
             children: [
