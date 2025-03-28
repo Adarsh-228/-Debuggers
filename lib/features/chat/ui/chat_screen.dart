@@ -150,14 +150,20 @@ class _ChatScreenState extends State<ChatScreen> {
               ),
             ),
             const SizedBox(width: 8),
-            IconButton.filled(
-              onPressed: () => context.read<ChatCubit>().scanBarcode(context),
-              icon: const Icon(Icons.camera_alt),
+            Tooltip(
+              message: 'Get Grocery List',
+              child: IconButton.filled(
+                onPressed: () {},
+                icon: const Icon(Icons.list_alt_rounded),
+              ),
             ),
             const SizedBox(width: 4),
-            IconButton.filled(
-              onPressed: () => _sendMessage(_textController.text),
-              icon: const Icon(Icons.send_rounded),
+            Tooltip(
+              message: 'Send Message',
+              child: IconButton.filled(
+                onPressed: () => _sendMessage(_textController.text),
+                icon: const Icon(Icons.send_rounded),
+              ),
             ),
           ],
         ),
