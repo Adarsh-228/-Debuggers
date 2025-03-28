@@ -153,7 +153,7 @@ class _ChatScreenState extends State<ChatScreen> {
             Tooltip(
               message: 'Get Grocery List',
               child: IconButton.filled(
-                onPressed: () {},
+                onPressed: () => _sendListMessage(_textController.text),
                 icon: const Icon(Icons.list_alt_rounded),
               ),
             ),
@@ -172,6 +172,12 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   void _sendMessage(String text) {
+    if (text.trim().isEmpty) return;
+    context.read<ChatCubit>().sendMessage(text.trim());
+    _textController.clear();
+  }
+
+  void _sendListMessage(String text) {
     if (text.trim().isEmpty) return;
     context.read<ChatCubit>().sendMessage(text.trim());
     _textController.clear();
