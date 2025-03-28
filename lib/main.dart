@@ -33,9 +33,9 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => getIt<ChatCubit>()),
       ],
       child: MaterialApp.router(
-        title: 'Food Scanner',
+        title: 'Health Companion',
         theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.purple),
           useMaterial3: true,
         ),
         routerConfig: router,

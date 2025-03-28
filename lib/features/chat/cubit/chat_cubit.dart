@@ -40,13 +40,24 @@ class ChatCubit extends Cubit<List<ChatMessage>> {
   }
 
   String get _systemPrompt {
-    const basePrompt = '''
+    String basePrompt = '''
     You are a helpful nutritionist assistant. Your task is to help user with suggestions and not speculation.
-    Do not use uncertain language. Give clear suggestions. Use previous messages for context.
-    When discussing nutrition topics, provide scientific references with URLs when relevant.
-    Format references exactly as: [title](https://url-without-spaces)
-    Keep responses concise and focused on nutrition and health.
-    Only include high-quality sources like scientific journals, government health sites (CDC, NIH, FDA), and reputable nutrition organizations.
+    When asked for a grocery list:
+    - Indian Diet Please
+    - Consider user preferences & indian food available in market
+    - Use ONLY plain text formatting (NO markdown, NO **, NO headers)
+    - Organize in categories using [Category Name] format
+    - Each item must start with - [ ] 
+    - Include quantities and units
+    - Add ❄️ after items that can be frozen
+    - Example format:
+        [Produce]
+        - [ ] 5 Bananas
+        - [ ] 2 Avocados ❄️
+    - Avoid any markdown formatting
+    - Never use bold/italic text
+    - Consider user preferences: 
+    ${_healthPreferences?.toPrompt() ?? 'No preferences set'}
     ''';
 
     if (_healthPreferences != null) {
@@ -69,12 +80,23 @@ ${_healthPreferences!.toPrompt()}
     }).join('\n');
   }
 
-  Future<void> sendMessage(String message) async {
+  Future<void> sendMessage(String message, {bool isList = false}) async {
     emit([...state, ChatMessage(content: message, isUser: true)]);
 
     try {
       const apiKey = Constants.apiKey;
       const url = Constants.url;
+
+      String prompt = isList
+          ? """
+    - Generate a 1-week grocery list for a diet plan that matches these requirements:
+    - Keep it organized by food categories
+    - Include quantities needed for the week
+    - Consider storage/freshness
+    - Add optional checkbox formatting
+    - Prompt: $message
+    """
+          : message;
 
       final response = await http.post(
         Uri.parse('$url?key=$apiKey'),
@@ -90,7 +112,7 @@ ${_healthPreferences!.toPrompt()}
               Chat History:
               $_chatHistory
               
-              User: $message
+              User: $prompt
               Assistant: '''
                 }
               ]
@@ -106,38 +128,19 @@ ${_healthPreferences!.toPrompt()}
         final reply =
             responseData['candidates'][0]['content']['parts'][0]['text'];
 
-        // Parse any references in the format [title](url)
-        final references = RegExp(r'\[(.*?)\]\((https?://[^\s\)]+)\)')
-            .allMatches(reply)
-            .map((match) => {
-                  'title': match.group(1),
-                  'url': match.group(2),
-                })
-            .toList();
+        // Check if this is a list response
+        final isListResponse =
+            RegExp(r'^\[.*\]$', multiLine: true).hasMatch(reply) &&
+                reply.contains('- [ ]');
 
-        if (references.isNotEmpty) {
-          // Add the main response
-          emit([
-            ...state,
-            ChatMessage(
-              content: reply,
-              isUser: false,
-              type: MessageType.text,
-            ),
-            // Add references as separate messages
-            ChatMessage(
-              content: 'References:',
-              isUser: false,
-              type: MessageType.reference,
-              metadata: {'references': references},
-            ),
-          ]);
-        } else {
-          emit([
-            ...state,
-            ChatMessage(content: reply, isUser: false),
-          ]);
-        }
+        emit([
+          ...state,
+          ChatMessage(
+            content: reply,
+            isUser: false,
+            type: isListResponse ? MessageType.list : MessageType.text,
+          ),
+        ]);
       } else {
         throw Exception('Failed to get response');
       }

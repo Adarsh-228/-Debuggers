@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:healthcompanion/features/chat/ui/chat_screen.dart';
-import 'package:healthcompanion/features/chat/ui/health_preferences_sheet.dart';
+import 'package:healthcompanion/features/chat/cubit/chat_cubit.dart';
 import 'package:healthcompanion/features/logs/ui/meal_log_screen.dart';
 import 'package:healthcompanion/features/scan/ui/image_scan_screen.dart';
-import 'package:healthcompanion/features/chat/cubit/chat_cubit.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:healthcompanion/features/chat/ui/health_preferences_sheet.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});

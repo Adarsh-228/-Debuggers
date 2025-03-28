@@ -179,7 +179,9 @@ class _ChatScreenState extends State<ChatScreen> {
 
   void _sendListMessage(String text) {
     if (text.trim().isEmpty) return;
-    context.read<ChatCubit>().sendMessage(text.trim());
+
+    String prompt = text;
+    context.read<ChatCubit>().sendMessage(prompt, isList: true);
     _textController.clear();
   }
 }
@@ -207,6 +209,8 @@ class _MessageBubble extends StatelessWidget {
               _buildProductCard(context)
             else if (message.type == MessageType.reference)
               _buildReferences(context)
+            else if (message.type == MessageType.list)
+              _buildGroceryList(context)
             else
               Container(
                 padding: const EdgeInsets.symmetric(
@@ -327,5 +331,77 @@ class _MessageBubble extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget _buildGroceryList(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Weekly Grocery List',
+                style: GoogleFonts.poppins(fontWeight: FontWeight.w600)),
+            const Divider(),
+            ..._parseListContent(message.content),
+          ],
+        ),
+      ),
+    );
+  }
+
+  List<Widget> _parseListContent(String content) {
+    final cleanedContent = content
+        .replaceAll('**', '') // Remove any bold markers
+        .replaceAll('__', '') // Remove any underline markers
+        .replaceAll(RegExp(r'\*{1,3}'), ''); // Remove any remaining asterisks
+
+    return cleanedContent.split('\n').map((line) {
+      final categoryMatch = RegExp(r'^\[(.*?)\]$').firstMatch(line.trim());
+      if (categoryMatch != null) {
+        return Padding(
+          padding: const EdgeInsets.only(top: 8),
+          child: Text(
+            categoryMatch.group(1)!,
+            style: GoogleFonts.poppins(
+              fontWeight: FontWeight.w500,
+              fontSize: 16,
+            ),
+          ),
+        );
+      }
+
+      if (line.trim().startsWith('- [ ]')) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Icon(Icons.check_box_outline_blank, size: 20),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  line.replaceAll('- [ ]', '').trim(),
+                  style: GoogleFonts.poppins(fontSize: 14),
+                ),
+              ),
+              if (line.contains('❄️'))
+                const Padding(
+                  padding: EdgeInsets.only(left: 4),
+                  child: Icon(Icons.ac_unit, size: 14),
+                ),
+            ],
+          ),
+        );
+      }
+
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 4),
+        child: Text(
+          line.trim(),
+          style: GoogleFonts.poppins(fontSize: 14),
+        ),
+      );
+    }).toList();
   }
 }

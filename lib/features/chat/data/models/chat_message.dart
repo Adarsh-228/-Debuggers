@@ -20,4 +20,5 @@ enum MessageType {
   error,
   suggestion,
   reference, // For model-provided references
+  list, // Add this new type
 }
