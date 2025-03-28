@@ -28,9 +28,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
+        BlocProvider(create: (_) => getIt<ChatCubit>()),
         BlocProvider(create: (_) => getIt<ProductCubit>()),
         BlocProvider(create: (_) => getIt<MealLogCubit>()..loadLogs()),
-        BlocProvider(create: (_) => getIt<ChatCubit>()),
       ],
       child: MaterialApp.router(
         title: 'Health Companion',
