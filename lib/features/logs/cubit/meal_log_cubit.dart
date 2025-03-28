@@ -89,8 +89,13 @@ class MealLogCubit extends Cubit<MealLogState> {
   }
 
   Future<List<MealLogModel>> loadLogs() async {
-    final logs = await _repository.getMealLogs();
-    emit(state.copyWith(history: logs));
-    return logs;
+    try {
+      final logs = await _repository.getMealLogs();
+      emit(state.copyWith(history: logs));
+      return logs;
+    } catch (e) {
+      emit(state.copyWith(history: []));
+      return [];
+    }
   }
 }

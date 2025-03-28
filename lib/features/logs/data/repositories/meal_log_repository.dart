@@ -16,10 +16,12 @@ class MealLogRepository {
 
   Future<List<MealLogModel>> getMealLogs() async {
     final jsonString = _prefs.getString(_kMealLogsKey);
-    if (jsonString == null) return [];
+    if (jsonString == null || jsonString.isEmpty) return [];
 
-    final jsonLogs = jsonDecode(jsonString) as List;
-    return jsonLogs.map((json) => MealLogModel.fromJson(json)).toList();
+    final jsonList = jsonDecode(jsonString) as List<dynamic>? ?? [];
+    return jsonList
+        .map((item) => MealLogModel.fromJson(item as Map<String, dynamic>))
+        .toList();
   }
 
   Future<void> clearLogs() async {

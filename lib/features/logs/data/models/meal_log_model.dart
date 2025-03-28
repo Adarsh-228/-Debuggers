@@ -27,19 +27,20 @@ class MealLogModel extends Equatable {
       };
 
   factory MealLogModel.fromJson(Map<String, dynamic> json) => MealLogModel(
-        id: json['id'],
-        timestamp: DateTime.parse(json['timestamp']),
-        breakfast: (json['breakfast'] as List)
-            .map((item) => FoodItem.fromJson(item))
+        id: json['id'] as String? ?? DateTime.now().toIso8601String(),
+        timestamp: DateTime.parse(
+            json['timestamp'] as String? ?? DateTime.now().toIso8601String()),
+        breakfast: ((json['breakfast'] as List?) ?? [])
+            .map((item) => FoodItem.fromJson(item as Map<String, dynamic>))
             .toList(),
-        lunch: (json['lunch'] as List)
-            .map((item) => FoodItem.fromJson(item))
+        lunch: ((json['lunch'] as List?) ?? [])
+            .map((item) => FoodItem.fromJson(item as Map<String, dynamic>))
             .toList(),
-        snacks: (json['snacks'] as List)
-            .map((item) => FoodItem.fromJson(item))
+        snacks: ((json['snacks'] as List?) ?? [])
+            .map((item) => FoodItem.fromJson(item as Map<String, dynamic>))
             .toList(),
-        dinner: (json['dinner'] as List)
-            .map((item) => FoodItem.fromJson(item))
+        dinner: ((json['dinner'] as List?) ?? [])
+            .map((item) => FoodItem.fromJson(item as Map<String, dynamic>))
             .toList(),
       );
 
