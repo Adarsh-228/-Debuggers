@@ -35,7 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
       // backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text(
-          'FoodScan',
+          'Health Companion',
           style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
         ),
         centerTitle: true,
@@ -74,7 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _currentIndex,
-        backgroundColor: Colors.green.shade50,
+        backgroundColor: Colors.purple.shade50,
         onDestinationSelected: (index) {
           setState(() => _currentIndex = index);
         },
